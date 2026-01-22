@@ -27,12 +27,12 @@ Aegis is an **Agentic AI** that automates this workflow using a **Federated Arch
 
 ```mermaid
 graph LR
-    A[Databricks (10GB Raw Logs)] -->|Aggregation| B(Gold Traffic Table)
-    C[Snowflake (SIEM)] -->|Alert Trigger| D[Aegis Agent]
+    A[Databricks / 10GB Raw Logs] -->|Aggregation| B(Gold Traffic Table)
+    C[Snowflake / SIEM] -->|Alert Trigger| D[Aegis Agent]
     
     D -->|1. Get Alert| C
     D -->|2. Get Evidence| B
-    D -->|3. Semantic Search| E[Local RAG (FAISS)]
+    D -->|3. Semantic Search| E[Local RAG / FAISS]
     
     E --> F[Final JSON Report]
 ```
