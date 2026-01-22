@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# Environment Variables (CRITICAL)
+.env
+
+# Data Files (Too large for GitHub)
+data/
+*.csv
+*.zip
+*.log
+
+# Vector Database (Local Artifacts)
+mitre_vector_db/
+*.faiss
+*.pkl
+
+# IDE Settings
+.vscode/
+.idea/
+
+# Local Spark/Hadoop Artifacts
+hadoop/
+metastore_db/
+derby.log
+spark-warehouse/
