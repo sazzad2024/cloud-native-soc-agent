@@ -88,6 +88,8 @@ python app/main_agent.py
 ```
 
 ## 📊 Sample Output
+
+### 1. Triage Package (JSON)
 ```json
 {
   "status": "Auto-Triaged",
@@ -101,11 +103,19 @@ python app/main_agent.py
     "traffic_volume": "368.3 MB",
     "packet_count": 58000
   },
-  "mitre_mapping": [
-    "Exploits (T1588.005)"
-  ]
+  "mitre_mapping": ["Exploits (T1588.005)"]
 }
 ```
 
+### 2. AI Narrative Summary (Gemini 2.0 Flash)
+> **EXECUTIVE SUMMARY:** Investigated a High-Severity Exploit alert originating from 18.218.229.235. The incident has been triaged as a critical threat due to abnormal traffic volume and direct mapping to MITRE ATT&CK T1588.005.
+>
+> **FINDINGS:**
+> - **Attack Type:** Exploit attempt against enterprise infrastructure.
+> - **Telemetry:** 368.3 MB of outbound traffic detected via Databricks forensics.
+> - **Intelligence:** Successfully mapped to MITRE "Exploitation of Vulnerability".
+>
+> **RECOMMENDATION:** Block source IP immediately and initiate credential rotation for the affected sub-system.
+
 ---
-**Created by [Sazzad]** - *Open for collaboration on Enterprise AI Security Architectures.*
+**Created by [A K M Sazzadul Alam]** - *Software Engineering & AI Security Architect.*
