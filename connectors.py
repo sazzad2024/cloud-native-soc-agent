@@ -71,6 +71,26 @@ class AegisConnector:
         print("[Connector] Error: No active Snowflake connection.")
         return None
 
+    def get_alert_by_id(self, alert_id: int):
+        """
+        Fetches a specific alert by ID from Snowflake.
+        """
+        if not self.sf_conn:
+            self.connect_snowflake()
+            
+        query = f"SELECT * FROM FACT_ALERTS WHERE alert_id = {alert_id}"
+        self.guard.validate_query(query)
+        
+        if self.sf_conn:
+            try:
+                cur = self.sf_conn.cursor()
+                cur.execute(query)
+                return cur.fetchall()
+            except Exception as e:
+                print(f"[Connector] Snowflake Query Error: {e}")
+                return None
+        return None
+
     def get_recent_alerts(self, limit: int = 10):
         """
         Fetches recent alerts from Snowflake (FACT_ALERTS table).
