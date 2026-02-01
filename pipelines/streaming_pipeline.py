@@ -5,10 +5,12 @@ from pyspark.sql.functions import col, when, sum as _sum
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType
 from delta import *
 
-# Define paths
-DATA_DIR = "data"
+# Define paths (Relative to project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
 # Set Hadoop Home for Windows
-os.environ['HADOOP_HOME'] = os.path.abspath("hadoop")
+os.environ['HADOOP_HOME'] = os.path.join(BASE_DIR, "hadoop")
 os.environ['PATH'] += os.pathsep + os.path.join(os.environ['HADOOP_HOME'], 'bin')
 
 STREAM_INPUT_DIR = os.path.join(DATA_DIR, "stream_input")
@@ -37,16 +39,6 @@ def main():
     print(f"[*] Starting Streaming Pipeline monitoring: {STREAM_INPUT_DIR}")
     
     # 1. READ (Streaming Source)
-    # Define a schema for the CSVs (needed for streaming)
-    # Based on CSE-CIC-IDS2018 or UNSW-NB15 patterns
-    # For flexibility, we can use a sample or define some common fields
-    # Here we use a generic schema but we'll try to infer if possible (inferSchema=True is slow in streaming)
-    
-    # Let's read one file to get schema if possible, or define manually
-    # For the sake of this demo, we'll assume the schema matches IDS2018 common fields
-    
-    # 2. DEFINE PIPELINE
-    # [FIX]: Spark Structured Streaming requires an explicit schema for file sources.
     schema = StructType([
         StructField("Dst Port", StringType(), True),
         StructField("Protocol", StringType(), True),
@@ -136,30 +128,12 @@ def main():
         .schema(schema) \
         .csv(STREAM_INPUT_DIR)
         
-    # Standardize column names
     df_cleaned = to_snake_case_stream(df_stream)
+    df_cleaned = df_cleaned.na.fill("0") 
     
-    # Handle Nulls
-    df_cleaned = df_cleaned.na.fill("0") # Fill with string "0" since all CSV reads are strings initially
-    
-    # 3. TRANSFORMATION (Silver/Gold Logic simplified for streaming)
-    # Convert types for calculation
-    # Only if columns exist
-    if "label" in df_cleaned.columns:
-        df_silver = df_cleaned.filter(col("label") != "Benign")
-    else:
-        df_silver = df_cleaned
+    # 3. TRANSFORMATION (Filter for Alerts)
+    df_silver = df_cleaned.filter(col("label") != "Benign")
 
-    # Aggregation in streaming requires a watermark or just outputting as is
-    # For a Gold table "Append", we can just store the processed events
-    # If we want to maintain the aggregate 'Gold' table from databricks_pipeline.py:
-    # df_gold = df_silver.groupBy("dst_port").agg(...)
-    # However, for an "alert" style streaming, we typically want the processed records
-    
-    # Let's stick to the aggregate logic but use Complete mode or Append mode with new records
-    # For this project, appending new alerts/events seems more appropriate for a SOC agent
-    
-    # Transform numeric columns
     df_numeric = df_silver.select(
         col("dst_port").cast(IntegerType()).alias("target_port"),
         col("tot_fwd_pkts").cast(IntegerType()).alias("total_packets"),
@@ -170,8 +144,6 @@ def main():
     # 4. WRITE (Streaming Sink - Delta Lake)
     print(f"[*] Sinking to: {DELTA_TABLE_PATH}")
     
-    # [REAL-WORLD NOTE]: In a high-speed SOC, we use a low trigger interval
-    # processingTime='1 second' means Spark checks for new events every second.
     query = df_numeric.writeStream \
         .format("delta") \
         .outputMode("append") \

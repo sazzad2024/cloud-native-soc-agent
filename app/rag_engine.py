@@ -5,8 +5,9 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 
 # Configuration
-DATA_PATH = os.path.join("data", "enterprise-attack.json")
-VECTOR_DB_PATH = os.path.join("data", "mitre_vector_db")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_PATH = os.path.join(BASE_DIR, "data", "enterprise-attack.json")
+VECTOR_DB_PATH = os.path.join(BASE_DIR, "data", "mitre_vector_db")
 
 class RAGEngine:
     def __init__(self):

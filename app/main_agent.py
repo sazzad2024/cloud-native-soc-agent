@@ -1,11 +1,17 @@
 from typing import TypedDict, List, Dict, Any, Optional
-import json
-from langgraph.graph import StateGraph, END
+import os
+import sys
+
+# Ensure neighbor imports work regardless of execution context
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from connectors import AegisConnector
 from rag_engine import RAGEngine
 from langchain_google_genai import ChatGoogleGenerativeAI
-import os
 
+# 1.# Define paths (Relative to project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 # 1. Define Agent State
 class AgentState(TypedDict):
     alert_id: int

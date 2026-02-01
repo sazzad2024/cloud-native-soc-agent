@@ -23,26 +23,34 @@ Aegis is an **Agentic AI** that automates this workflow using a **Federated Arch
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Project Structure
 
-```mermaid
-graph LR
-    A[Databricks / 10GB Raw Logs] -->|Aggregation| B(Gold Traffic Table)
-    C[Snowflake / SIEM] -->|Alert Trigger| D[Aegis Agent]
-    
-    D -->|1. Get Alert| C
-    D -->|2. Get Evidence| B
-    D -->|3. Semantic Search| E[Local RAG / FAISS]
-    
-    E --> F[Final JSON Report]
+```text
+socagent/
+├── app/                    # 🧠 Core Agent Logic
+│   ├── main_agent.py       # LangGraph Orchestrator
+│   ├── connectors.py       # Snowflake/Databricks APIs
+│   ├── rag_engine.py       # Semantic RAG Engine
+│   └── guardrails.py       # SQL Injection Protection
+├── pipelines/              # 🌊 Data Engineering
+│   ├── streaming_pipeline.py# PySpark Stream
+│   └── simulate_stream.py  # Traffic Generator
+├── scripts/                # 🛠️ Utilities
+│   ├── check_snowflake.py  # Connection Audit
+│   └── list_models.py      # Gemini Model Check
+├── sql/                    # 🏗️ Database Schemas
+│   └── snowflake_setup.sql
+└── tests/                  # 🧪 Verification
+    └── verify_run2.py      # Agent Test Scenarios
 ```
 
 ## 🛠️ Tech Stack
 *   **Orchestrator**: LangGraph (Stateful Python Agent)
-*   **SIEM / Identity**: Snowflake (`FACT_ALERTS`, `DIM_USERS`)
-*   **Data Lake / Forensics**: Databricks SQL (`gold_network_telemetry`)
-*   **AI / RAG**: `sentence-transformers` (HuggingFace) + `FAISS` (Vector DB)
-*   **Security**: Custom `SQLGuardrail` to prevent Injection.
+*   **LLM**: Google Gemini 2.0 Flash
+*   **SIEM / Identity**: Snowflake (`FACT_ALERTS`)
+*   **Data Lake**: Databricks SQL (`Delta Lake`)
+*   **AI / RAG**: `sentence-transformers` + `FAISS`
+*   **Security**: Custom `SQLGuardrail` & LLM Output Verification.
 
 ## 🚀 How to Run
 
@@ -68,15 +76,15 @@ cp .env.example .env
 ### 4. Setup Data (Simulation)
 ```bash
 # 1. Setup Snowflake (Tables & Alerts)
-python utils/seed_snowflake_real.py
+python scripts/seed_snowflake_real.py
 
 # 2. Setup Databricks (Gold Tables)
-python utils/seed_databricks.py
+python scripts/seed_databricks.py
 ```
 
 ### 5. Run the Agent
 ```bash
-python main_agent.py
+python app/main_agent.py
 ```
 
 ## 📊 Sample Output
