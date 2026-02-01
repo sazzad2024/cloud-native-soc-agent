@@ -111,11 +111,11 @@ python app/main_agent.py
 > **EXECUTIVE SUMMARY:** Investigated a High-Severity Exploit alert originating from 18.218.229.235. The incident has been triaged as a critical threat due to abnormal traffic volume and direct mapping to MITRE ATT&CK T1588.005.
 >
 > **FINDINGS:**
-> - **Attack Type:** Exploit attempt against enterprise infrastructure.
-> - **Telemetry:** 368.3 MB of outbound traffic detected via Databricks forensics.
-> - **Intelligence:** Successfully mapped to MITRE "Exploitation of Vulnerability".
+> - **Attack Type:** High-Confidence Exploit attempt with potential Exfiltration signal.
+> - **Anomalous Outbound Volume:** 368.3 MB identified via Databricks (Forensic Layer).
+> - **Adversary TTPs:** Signature matches MITRE ATT&CK T1588.005 (Resource Development).
 >
 > **RECOMMENDATION:** Block source IP immediately and initiate credential rotation for the affected sub-system.
 
 ---
-**Created by [A K M Sazzadul Alam]** - *Software Engineering & AI Security Architect.*
+**Created by [A K M Sazzadul Alam]** - *Security Engineer (AI Specialization)*
